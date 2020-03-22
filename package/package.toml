@@ -1,0 +1,6 @@
+
+[source]
+name = "cl"
+description = "mypackage"
+threebot = "mybot"
+version = "1.0.0"
