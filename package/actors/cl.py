@@ -1,8 +1,12 @@
 
 from Jumpscale import j
+import json
 
 class cl(j.baseclasses.threebot_actor):
     
+    def _init(self, **kwargs):
+        self.redisclient = j.clients.redis.get()
+
     @j.baseclasses.actor_method
     def ps(self, name=None, exists=False, pid=False, schema_out=None, user_session=None):
         """
@@ -16,16 +20,16 @@ class cl(j.baseclasses.threebot_actor):
 
         if not any([name, exists, pid]):
             rc, out, err = j.sal.process.execute("ps ax", showout=False)
-            return out
+            return json.dumps({'data': out})
         elif not name:
-            return 'No process name provided'
+            return json.dumps({'data': 'No process name provided'})
         else:
             if exists:
                 out += f'Exists={str(j.sal.process.psfind(name))}\n'
             if pid:
                 out += f'PID={str(j.sal.process.getProcessPid(name))}\n'
         
-        return out
+        return json.dumps({'data': out})
 
     @j.baseclasses.actor_method
     def netcheck(self, port=None, info=False, NI=None, hostname=False, ping=None,
@@ -51,7 +55,7 @@ class cl(j.baseclasses.threebot_actor):
         else:
             out = j.sal.nettools.networkinfo_get()
         
-        return out
+        return json.dumps({'data': out})
     
     @j.baseclasses.actor_method
     def wordcount(self, path=None, lines=False, words=False, chars=False,
@@ -65,7 +69,7 @@ class cl(j.baseclasses.threebot_actor):
         """
         
         if not path:
-            return 'No file path provided'
+            return json.dumps({'data':'No file path provided'})
 
         file_content = j.sal.fs.readFile(path)
         no_options = False
@@ -84,4 +88,62 @@ class cl(j.baseclasses.threebot_actor):
         if no_options or chars:
             out += f'Characters={len(file_content)}\n'
 
-        return out
+        return json.dumps({'data': out})
+
+    @j.baseclasses.actor_method
+    def create_note(self, id, text, checked=False, schema_out=None, user_session=None):
+        """
+        create new todo-note in redis
+        @param id is id of the todo-note
+        @param text is text of the todo-note
+        @param checked is a flag whether the todo-note is checked or not
+        """
+
+        out=''
+        exists = self.redisclient.hexists('note:'+str(id), 'checked')
+        if exists:
+            return json.dumps({'data': 'Note with ID '+str(id)+' exists!'})
+        else:
+            out = self.redisclient.hmset('note:'+str(id), {'checked':str(checked),
+                                             'text': text
+                                            })
+        print(out)
+        return json.dumps({'data':out})
+
+    @j.baseclasses.actor_method
+    def edit_note(self, id, text, checked=False, schema_out=None, user_session=None):
+        """
+        edit existing todo-note in redis
+        @param id is id of the todo-note
+        @param text is text of the todo-note
+        @param checked is a flag whether the todo-note is checked or not
+        """
+
+        out=''
+        exists = self.redisclient.hexists('note:'+str(id), 'checked')
+        if not exists:
+            return json.dumps({'data': 'Note with ID '+str(id)+' does not exists!'})
+        else:
+            out = self.redisclient.hmset('note:'+str(id), {'checked':str(checked),
+                                             'text': text
+                                            })
+        print(out)
+        return json.dumps({'data':out})
+
+    @j.baseclasses.actor_method
+    def delete_note(self, id, schema_out=None, user_session=None):
+        """
+        delete todo-note from redis
+        @param id is id of the todo-note
+        """
+
+        out=''
+        
+        exists = self.redisclient.hexists('note:'+str(id), 'checked')
+        if not exists:
+            return json.dumps({'data': 'Note with ID '+str(id)+' does not exists!'})
+        else:
+            out = self.redisclient.hdel('note:'+str(id), 'checked', 'text')
+
+        print(out)
+        return json.dumps({'data':out})
