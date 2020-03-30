@@ -1,6 +1,12 @@
 
 [source]
-name = "cl"
-description = "mypackage"
-threebot = "mybot"
+name = "todo"
+description = "Simple todo-list package"
+threebot = "zerobot"
 version = "1.0.0"
+
+[[bcdbs]]
+name = "zerobot_todo"
+namespace = "zerobot_todo"
+type = "zdb"
+instance = "default"

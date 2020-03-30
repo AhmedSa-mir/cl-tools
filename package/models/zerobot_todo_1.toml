@@ -1,0 +1,10 @@
+@url = zerobot.todo.note.1
+noteid** = (I)
+text = (S)
+checked = False (B)
+
+@url = zerobot.todo.notelist.1
+list = (LO) !zerobot.todo.note.1
+
+@url =  zerobot.todo.resp.1
+data = "" (S)
