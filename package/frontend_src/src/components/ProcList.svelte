@@ -63,7 +63,7 @@
     onMount(() => {
 
         // Get running processes
-        packageGedisClient.mybot.cli.actors.cli.ps().then((resp) => {
+        packageGedisClient.zerobot.todo.actors.cli.ps().then((resp) => {
             if (resp.ok) {
                 resp.json().then((json) => {
 
@@ -73,7 +73,6 @@
                 })
             } else {
                 let err = new Error(resp)
-                lastError = err;
                 throw err;
             }
         })

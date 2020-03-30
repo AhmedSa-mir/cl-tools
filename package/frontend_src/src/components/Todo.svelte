@@ -56,14 +56,13 @@
         };
 
         // Save it in redis/bcdb
-        packageGedisClient.mybot.cli.actors.todo.create(args).then((resp) => {
+        packageGedisClient.zerobot.todo.actors.todo.create(args).then((resp) => {
             if (resp.ok) {
                 resp.json().then((json) => {
                     console.log(json.data) 
                 })
             } else {
                 let err = new Error(resp)
-                lastError = err;
                 throw err;
             }
         })
@@ -105,14 +104,13 @@
             };
 
             // Update note in redis/bcdb
-            packageGedisClient.mybot.cli.actors.todo.update(args).then((resp) => {
+            packageGedisClient.zerobot.todo.actors.todo.update(args).then((resp) => {
                 if (resp.ok) {
                     resp.json().then((json) => {
                         console.log(json.data) 
                     })
                 } else {
                     let err = new Error(resp)
-                    lastError = err;
                     throw err;
                 }
             })
@@ -136,14 +134,13 @@
 
         // Delete note from redis/bcdb
         let args = {note_id:Number(key)};
-        packageGedisClient.mybot.cli.actors.todo.delete(args).then((resp) => {
+        packageGedisClient.zerobot.todo.actors.todo.delete(args).then((resp) => {
             if (resp.ok) {
                 resp.json().then((json) => {
                     console.log(json.data) 
                 })
             } else {
                 let err = new Error(resp)
-                lastError = err;
                 throw err;
             }
         })

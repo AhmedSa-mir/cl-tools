@@ -20,8 +20,8 @@
   </div>
   <div class="row">
     {#if visible}  
-      <p transition:fade="{{duration: 500}}">
-      <i transition:fade="{{duration: 500}}" class="fa fa-terminal align-middle" style="font-size:48px;"></i>
+      <p transition:fade|local="{{duration: 500}}">
+      <i transition:fade|local="{{duration: 500}}" class="fa fa-terminal align-middle" style="font-size:48px;"></i>
       where you can execute commands</p>
     {:else}
       <p></p>
